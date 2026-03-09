@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализ на техника при гребане</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Анализ на техника при гребане</h1>
+        <p class="subtitle">Платформа за обективна оценка чрез компютърно зрение</p>
+    </header>
+
+    <main class="container">
+        <section class="reference-section card">
+            <h2>Референтен модел</h2>
+            <p>Качете видеа с правилна техника. Моделът ще се научи от тях и ще сравнява новите анализи с тях.</p>
+            <div class="reference-actions">
+                <div class="upload-zone upload-zone-small" id="refUploadZone">
+                    <input type="file" id="refFileInput" accept="video/*" hidden>
+                    <span>+ Качи референтно видео</span>
+                </div>
+                <button id="trainBtn" class="btn btn-primary">Обучи модел</button>
+                <button id="refreshModelBtn" class="btn btn-secondary">Провери статус</button>
+            </div>
+            <div id="modelStatus" class="status"></div>
+            <div id="refVideosList" class="ref-videos-list"></div>
+        </section>
+
+        <section class="upload-section card">
+            <h2>Качване на видео</h2>
+            <p>Изберете тренировъчно видео за анализ (MP4, AVI, MOV)</p>
+            <div class="upload-zone" id="uploadZone">
+                <input type="file" id="fileInput" accept="video/*" hidden>
+                <div class="upload-content">
+                    <span class="upload-icon">📹</span>
+                    <p>Плъзнете видео тук или кликнете за избор</p>
+                </div>
+            </div>
+            <div id="uploadStatus" class="status"></div>
+        </section>
+
+        <section class="analyze-section card" id="analyzeSection" style="display: none;">
+            <h2>Анализ</h2>
+            <button id="analyzeBtn" class="btn btn-primary">Стартирай анализ</button>
+            <div id="analyzeStatus" class="status"></div>
+        </section>
+
+        <section class="results-section card" id="resultsSection" style="display: none;">
+            <h2>Резултати</h2>
+            <div id="resultsContent"></div>
+            <button id="refreshBtn" class="btn btn-secondary">Обнови резултати</button>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>Дипломна работа – Уеб базирана платформа за анализ на техника при гребане</p>
+    </footer>
+
+    <!-- Чатбот -->
+    <div class="chat-widget" id="chatWidget">
+        <button class="chat-toggle" id="chatToggle" title="Съветник за гребане">💬</button>
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-header">
+                <h3>Съветник за гребане</h3>
+                <p>Питайте за техника, планове и подготовка</p>
+                <button class="chat-close" id="chatClose">×</button>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Напишете въпрос..." maxlength="500">
+                <button id="chatSend" class="btn btn-primary">Изпрати</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
