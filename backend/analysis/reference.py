@@ -1,20 +1,20 @@
 """
-Референтни стойности за правилна техника при гребане.
+Референтни стойности за правилна техника при кану-каяк.
 """
 from typing import Dict
 
 
 REFERENCE_VALUES = {
     "torso_rotation": {
-        "range_deg": {"min": 25, "max": 50, "optimal": 35},
+        "range_deg": {"min": 30, "max": 65, "optimal": 45},
         "description": "Ротация на торса (градуси)"
     },
     "drive_recovery_ratio": {
-        "ratio": {"min": 0.33, "max": 0.5, "optimal": 0.4},
+        "ratio": {"min": 0.33, "max": 0.55, "optimal": 0.42},
         "description": "Съотношение drive:recovery"
     },
     "stroke_rate": {
-        "spm": {"min": 18, "max": 32, "optimal": 24},
+        "spm": {"min": 55, "max": 95, "optimal": 70},
         "description": "Честота на загребвания (SPM)"
     },
     "symmetry": {

@@ -186,7 +186,7 @@ if (chatInput) chatInput.addEventListener("keypress", (e) => { if (e.key === "En
 
 function addWelcomeMessage() {
     if (chatMessages.children.length === 0) {
-        appendChatMessage("assistant", "Здравейте! Аз съм съветник за гребане. Мога да помагам с:\n• Техника и анализ\n• Тренировъчни планове\n• Спортна подготовка\n\nПитайте каквото искате!");
+        appendChatMessage("assistant", "Здравейте! Аз съм съветник за кану-каяк. Мога да помагам с:\n• Техника и анализ\n• Тренировъчни планове\n• Спортна подготовка\n\nПитайте каквото искате!");
     }
 }
 

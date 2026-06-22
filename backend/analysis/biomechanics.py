@@ -1,5 +1,5 @@
 """
-Анализ на биомеханични параметри при гребане.
+Анализ на биомеханични параметри при кану-каяк.
 """
 import numpy as np
 from typing import Dict, List, Tuple, Optional
@@ -77,8 +77,8 @@ class BiomechanicsAnalyzer:
         valid = ~np.isnan(wrist_y)
         if np.sum(valid) < 10:
             return {"ratio": 0.5, "drive_sec": 0, "recovery_sec": 0, "strokes": 0}
-        # Минимум 0.8 сек между пикове (макс ~75 SPM)
-        peaks, _ = find_peaks(-wrist_y[valid], distance=int(fps*0.8), prominence=0.02)
+        # Минимум 0.4 сек между пикове (макс ~150 SPM за каяк)
+        peaks, _ = find_peaks(-wrist_y[valid], distance=int(fps*0.4), prominence=0.02)
         if len(peaks) < 2:
             return {"ratio": 0.5, "drive_sec": 0, "recovery_sec": 0, "strokes": 0}
         ct = np.diff(np.where(valid)[0][peaks]) / fps
@@ -98,8 +98,8 @@ class BiomechanicsAnalyzer:
         valid = ~np.isnan(wrist_y)
         if np.sum(valid) < 10:
             return {"spm": 0, "stroke_interval_sec": 0, "total_strokes": 0}
-        # Минимум 0.8 сек между strokes (реалистичен SPM за гребане)
-        peaks, _ = find_peaks(-wrist_y[valid], distance=int(fps*0.8), prominence=0.02)
+        # Минимум 0.4 сек между strokes (реалистичен SPM за каяк/кану)
+        peaks, _ = find_peaks(-wrist_y[valid], distance=int(fps*0.4), prominence=0.02)
         ds = len(frames) / fps
         spm = (len(peaks)/ds)*60 if ds > 0 else 0
         return {"spm": float(round(spm, 1)), "stroke_interval_sec": float(round(60/spm, 2)) if spm > 0 else 0, "total_strokes": len(peaks)}
@@ -121,23 +121,23 @@ class BiomechanicsAnalyzer:
     def _generate_recommendations(self, metrics: Dict) -> List[str]:
         recs = []
         tr = metrics.get("torso_rotation", {})
-        if tr.get("range_deg", 0) < 20:
-            recs.append("Уверете се, че използвате пълна ротация на торса (catch и finish).")
-        if tr.get("range_deg", 100) > 60:
-            recs.append("Внимание: прекалена ротация може да причини травми.")
+        if tr.get("range_deg", 0) < 15:
+            recs.append("Увеличете ротацията на торса — в кану-каяк тя е основен двигател на удара.")
+        if tr.get("range_deg", 100) > 65:
+            recs.append("Внимание: прекалена ротация може да причини травми на гръбнака.")
         dr = metrics.get("drive_recovery_ratio", {})
-        if dr.get("ratio", 0.5) > 0.6:
-            recs.append("Recovery фазата трябва да е по-дълга от drive.")
+        if dr.get("ratio", 0.5) > 0.65:
+            recs.append("Recovery фазата трябва да е по-дълга от drive — позволява активен вход на перката.")
         if dr.get("ratio", 0.5) < 0.3:
-            recs.append("Drive фазата изглежда твърде кратка.")
+            recs.append("Drive фазата изглежда твърде кратка — работете върху завършен натиск.")
         sr = metrics.get("stroke_rate", {})
         spm = sr.get("spm", 0)
-        if 0 < spm < 18:
-            recs.append("Честотата е ниска. Може да увеличите темпото.")
-        if spm > 36:
-            recs.append("Внимание: много висока честота може да влоши техниката.")
-        if metrics.get("symmetry", {}).get("symmetry_score", 100) < 70:
-            recs.append("Наблюдава се асиметрия. Работете върху еднакво задвижване.")
+        if 0 < spm < 50:
+            recs.append("Честотата е ниска за кану-каяк. Типичното тренировъчно темпо е 60–90 SPM.")
+        if spm > 150:
+            recs.append("Внимание: много висока честота може да влоши техниката и ефективността на удара.")
+        if metrics.get("symmetry", {}).get("symmetry_score", 100) < 80:
+            recs.append("Наблюдава се асиметрия между левия и десния удар — работете върху балансирано гребане.")
         if not recs:
             recs.append("Техниката изглежда добра!")
         return recs
