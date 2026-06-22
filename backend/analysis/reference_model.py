@@ -85,10 +85,10 @@ def train_model_from_videos() -> Dict:
             }
         else:
             defaults = {
-                "torso_rotation": {"mean": 35, "std": 5, "min": 25, "max": 50, "n_samples": 0},
-                "drive_recovery_ratio": {"mean": 0.4, "std": 0.05, "min": 0.33, "max": 0.5, "n_samples": 0},
-                "stroke_rate": {"mean": 24, "std": 4, "min": 18, "max": 32, "n_samples": 0},
-                "symmetry": {"mean": 95, "std": 5, "min": 80, "max": 100, "n_samples": 0}
+                "torso_rotation": {"mean": 45, "std": 8, "min": 30, "max": 65, "n_samples": 0},
+                "drive_recovery_ratio": {"mean": 0.42, "std": 0.05, "min": 0.33, "max": 0.55, "n_samples": 0},
+                "stroke_rate": {"mean": 70, "std": 8, "min": 55, "max": 95, "n_samples": 0},
+                "symmetry": {"mean": 90, "std": 5, "min": 80, "max": 100, "n_samples": 0}
             }
             model["metrics"][key] = defaults.get(key, {"mean": 0, "std": 1, "min": 0, "max": 100, "n_samples": 0})
 

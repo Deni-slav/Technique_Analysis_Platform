@@ -58,14 +58,11 @@ class BiomechanicsAnalyzer:
         if not angles:
             return {"mean_deg": 0, "range_deg": 0, "valid_frames": 0}
         angles_arr = np.array(angles)
-        ptp = np.ptp(angles_arr)
-        # unwrap за правилна амплитуда при wrap-around (-180/180)
-        unwrapped = np.degrees(np.unwrap(np.radians(angles_arr)))
-        ptp_unwrapped = np.ptp(unwrapped)
-        # Амплитуда на stroke: unwrapped range, ограничена до 90°
-        range_deg = min(ptp_unwrapped, 90) if ptp_unwrapped < 180 else min(360 - ptp_unwrapped, 90)
-        range_deg = min(range_deg, 90)
-        return {"mean_deg": float(np.mean(angles)), "range_deg": float(round(range_deg, 1)), "min_deg": float(np.min(angles)), "max_deg": float(np.max(angles)), "valid_frames": len(angles)}
+        # P95-P5 персентилна амплитуда — устойчива на outliers,
+        # не акумулира ъгъл за целия видеофайл като unwrap+ptp
+        range_deg = float(np.percentile(angles_arr, 95) - np.percentile(angles_arr, 5))
+        range_deg = float(round(max(0.0, min(range_deg, 90.0)), 1))
+        return {"mean_deg": float(round(float(np.mean(angles_arr)), 1)), "range_deg": range_deg, "min_deg": float(np.min(angles_arr)), "max_deg": float(np.max(angles_arr)), "valid_frames": len(angles)}
 
     def _compute_drive_recovery_ratio(self, frames: List[Dict], fps: float) -> Dict:
         wrist_y = []
@@ -111,7 +108,7 @@ class BiomechanicsAnalyzer:
             ls, rs = self._get_landmark(frame, "left_shoulder"), self._get_landmark(frame, "right_shoulder")
             if all([le, re, ls, rs]):
                 ld = np.hypot(le[0]-ls[0], le[1]-ls[1])
-                rd = np.hypot(re[0]-rs[0], re[1]-rs[1])
+                rd = np.hypot(re[0]-rs[0], re[1]-ls[1])
                 diffs.append(abs(ld-rd))
         if not diffs:
             return {"symmetry_score": 100, "mean_diff": 0}
@@ -122,12 +119,12 @@ class BiomechanicsAnalyzer:
         recs = []
         tr = metrics.get("torso_rotation", {})
         if tr.get("range_deg", 0) < 15:
-            recs.append("Увеличете ротацията на торса — в кану-каяк тя е основен двигател на удара.")
+            recs.append("Увеличете ротацията на торса — в кану-каяка тя е основен двигател на загребока.")
         if tr.get("range_deg", 100) > 65:
             recs.append("Внимание: прекалена ротация може да причини травми на гръбнака.")
         dr = metrics.get("drive_recovery_ratio", {})
         if dr.get("ratio", 0.5) > 0.65:
-            recs.append("Recovery фазата трябва да е по-дълга от drive — позволява активен вход на перката.")
+            recs.append("Recovery фазата трябва да е по-дълга от drive — позволява активен вход на лодката.")
         if dr.get("ratio", 0.5) < 0.3:
             recs.append("Drive фазата изглежда твърде кратка — работете върху завършен натиск.")
         sr = metrics.get("stroke_rate", {})
@@ -135,7 +132,7 @@ class BiomechanicsAnalyzer:
         if 0 < spm < 50:
             recs.append("Честотата е ниска за кану-каяк. Типичното тренировъчно темпо е 60–90 SPM.")
         if spm > 150:
-            recs.append("Внимание: много висока честота може да влоши техниката и ефективността на удара.")
+            recs.append("Внимание: много висока честота може да влоши техниката и ефективността на загребока.")
         if metrics.get("symmetry", {}).get("symmetry_score", 100) < 80:
             recs.append("Наблюдава се асиметрия между левия и десния удар — работете върху балансирано гребане.")
         if not recs:

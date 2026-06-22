@@ -14,3 +14,10 @@ backend/models/
 .env.local
 .idea/
 .vscode/
+~$*
+.claude/
+.playwright-mcp/
+*.png
+scripts/build_calm_rules.py
+scripts/update_diploma_docx.ps1
+GITHUB_UPLOAD.md
