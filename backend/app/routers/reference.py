@@ -76,7 +76,7 @@ async def train_model(background_tasks: BackgroundTasks):
     background_tasks.add_task(_run_training)
     return {
         "status": "training",
-        "message": f"Обучението е стартирано от {len(paths)} видео. Изчакайте 1-5 минути.",
+        "message": f"Обучението е стартирано от {len(paths)} {'видео' if len(paths) == 1 else 'видеа'}. Изчакайте 1-5 минути.",
         "n_videos": len(paths)
     }
 
@@ -103,5 +103,5 @@ async def get_model_status():
         "n_videos": model.get("n_videos", 0),
         "n_successful": model.get("n_successful", 0),
         "metrics": model.get("metrics", {}),
-        "message": f"Моделът е обучен от {model.get('n_successful', 0)} видео."
+        "message": f"Моделът е обучен от {model.get('n_successful', 0)} {'видео' if model.get('n_successful', 0) == 1 else 'видеа'}."
     }
